@@ -6,7 +6,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 import ru.dezerom.kmpmm.common.requests.makePost
-import ru.dezerom.kmpmm.common.responds.StringResponse
+import ru.dezerom.kmpmm.common.responds.common.StringResponse
 import ru.dezerom.kmpmm.plugins.configureRouting
 import ru.dezerom.kmpmm.plugins.configureSerialization
 import kotlin.test.Test
