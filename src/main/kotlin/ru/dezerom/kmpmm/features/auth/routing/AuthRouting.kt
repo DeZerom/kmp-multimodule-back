@@ -14,5 +14,9 @@ fun Application.configureAuthRoutes() {
         post("/register") {
             call.makeResponse { authService.registerUser(call.receiveNullable()) }
         }
+
+        post("/auth") {
+            call.makeResponse { authService. }
+        }
     }
 }

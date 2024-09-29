@@ -5,7 +5,7 @@ import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import ru.dezerom.kmpmm.features.auth.data.repository.AuthRepository
-import ru.dezerom.kmpmm.features.auth.data.sources.UserSourceImpl
+import ru.dezerom.kmpmm.features.auth.data.sources.user.UserSourceImpl
 import ru.dezerom.kmpmm.features.auth.domain.services.AuthService
 
 fun Application.configureKoin() {

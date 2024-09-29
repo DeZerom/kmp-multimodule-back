@@ -6,5 +6,6 @@ object StringConst {
         const val USER_ALREADY_EXISTS = "Пользователь с таким логином уже зарегистрирован"
         const val CANNOT_GET_USER = "Ошибка при получении пользователя"
         const val CANNOT_CREATE_USER = "Ошибка при создании пользователя"
+        const val WRONG_CREDENTIALS = "Неверный логин или пароль"
     }
 }
