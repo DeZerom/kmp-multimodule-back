@@ -14,6 +14,6 @@ fun Application.module() {
     configureDB()
     configureSecurity()
     configureSerialization()
-    configureFrameworks()
+    configureKoin()
     configureRouting()
 }

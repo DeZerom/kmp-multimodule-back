@@ -5,10 +5,10 @@ import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import ru.dezerom.kmpmm.features.auth.data.repository.AuthRepository
-import ru.dezerom.kmpmm.features.auth.data.sources.UserSource
+import ru.dezerom.kmpmm.features.auth.data.sources.UserSourceImpl
 import ru.dezerom.kmpmm.features.auth.domain.services.AuthService
 
-fun Application.configureFrameworks() {
+fun Application.configureKoin() {
     install(Koin) {
         slf4jLogger()
         modules(authModule)
@@ -16,7 +16,7 @@ fun Application.configureFrameworks() {
 }
 
 private val authModule = module {
-    single { UserSource() }
+    single { UserSourceImpl() }
     single { AuthRepository(get()) }
     single { AuthService(get()) }
 }

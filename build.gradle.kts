@@ -42,4 +42,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.postgresql:postgresql:42.7.2")
+    testImplementation("com.h2database:h2:2.3.232")
+
 }

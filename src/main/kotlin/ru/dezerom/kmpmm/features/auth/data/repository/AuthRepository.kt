@@ -1,9 +1,9 @@
 package ru.dezerom.kmpmm.features.auth.data.repository
 
-import ru.dezerom.kmpmm.features.auth.data.sources.UserSource
+import ru.dezerom.kmpmm.features.auth.data.sources.UserSourceImpl
 
 class AuthRepository(
-    private val userSource: UserSource,
+    private val userSource: UserSourceImpl,
 ) {
     suspend fun hasUser(login: String): Result<Boolean> {
         return userSource.getUser(login).map { it != null }

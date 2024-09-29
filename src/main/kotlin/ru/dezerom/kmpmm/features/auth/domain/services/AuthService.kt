@@ -1,6 +1,7 @@
 package ru.dezerom.kmpmm.features.auth.domain.services
 
 import io.ktor.http.*
+import ru.dezerom.kmpmm.common.constants.StringConst
 import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.common.responds.errors.ResponseError
 import ru.dezerom.kmpmm.common.utils.sha256Hash
@@ -14,7 +15,7 @@ class AuthService(
         if (credentials == null || credentials.login.isNullOrBlank() || credentials.password.isNullOrBlank()) {
             return Result.failure(ResponseError(
                 code = HttpStatusCode.BadRequest,
-                message = "Не переданы логин и/или пароль"
+                message = StringConst.Errors.NO_CREDENTIALS
             ))
         }
 
@@ -24,7 +25,7 @@ class AuthService(
                 if (it) {
                     return Result.failure(ResponseError(
                         code = HttpStatusCode.BadRequest,
-                        message = "Пользователь с таким логином уже зарегистрирован",
+                        message = StringConst.Errors.USER_ALREADY_EXISTS
                     ))
                 }
             },
