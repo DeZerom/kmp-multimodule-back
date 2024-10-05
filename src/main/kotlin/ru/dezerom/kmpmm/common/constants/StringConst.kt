@@ -7,5 +7,6 @@ object StringConst {
         const val CANNOT_GET_USER = "Ошибка при получении пользователя"
         const val CANNOT_CREATE_USER = "Ошибка при создании пользователя"
         const val WRONG_CREDENTIALS = "Неверный логин или пароль"
+        const val AUTH_ERROR = "Ошибка авторизации"
     }
 }

@@ -1,17 +1,21 @@
 package ru.dezerom.kmpmm.features.auth.data.repository
 
+import ru.dezerom.kmpmm.features.auth.data.sources.TokenSource
 import ru.dezerom.kmpmm.features.auth.data.sources.UserSource
+import ru.dezerom.kmpmm.features.auth.domain.models.TokensModel
 import ru.dezerom.kmpmm.features.auth.domain.models.UserModel
+import java.util.*
 
 class AuthRepository(
     private val userSource: UserSource,
     private val tokenSource: TokenSource,
 ) {
     suspend fun saveTokens(
+        userId: UUID,
         accessToken: String,
         refreshToken: String,
-    ): Result<Boolean> {
-        return tokenSource.saveTokens(accessToken, refreshToken)
+    ): Result<TokensModel> {
+        return tokenSource.saveTokens(userId, accessToken, refreshToken)
     }
 
     suspend fun getUserByLogin(login: String): Result<UserModel?> {

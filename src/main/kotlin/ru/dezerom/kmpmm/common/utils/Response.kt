@@ -4,13 +4,12 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import ru.dezerom.kmpmm.common.responds.Response
-import ru.dezerom.kmpmm.common.responds.Sendable
 import ru.dezerom.kmpmm.common.responds.errors.ResponseError
 import ru.dezerom.kmpmm.common.responds.errors.toResponse
 
-suspend inline fun <reified R : Any, T: Sendable<R>> ApplicationCall.makeResponse(block: () -> Result<T>) {
+suspend inline fun <reified R : Any> ApplicationCall.makeResponse(block: () -> Result<R>) {
     block().fold(
-        onSuccess = { respond(Response(true, it.toDto())) },
+        onSuccess = { respond(Response(true, it)) },
         onFailure = {
             val err = it as? ResponseError
 

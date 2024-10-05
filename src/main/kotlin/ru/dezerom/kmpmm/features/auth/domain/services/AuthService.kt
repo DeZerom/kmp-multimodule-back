@@ -9,13 +9,15 @@ import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.common.responds.errors.ResponseError
 import ru.dezerom.kmpmm.common.utils.sha256Hash
 import ru.dezerom.kmpmm.features.auth.data.repository.AuthRepository
+import ru.dezerom.kmpmm.features.auth.domain.mapper.toDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
+import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import java.util.*
 
 class AuthService(
     private val authRepository: AuthRepository,
 ) {
-    suspend fun authorizeUser(credentials: CredentialsDto?): Result<String> {
+    suspend fun authorizeUser(credentials: CredentialsDto?): Result<TokensDto> {
         if (credentials == null || credentials.login.isNullOrBlank() || credentials.password.isNullOrBlank()) {
             return Result.failure(ResponseError(
                 code = HttpStatusCode.BadRequest,
@@ -38,7 +40,14 @@ class AuthService(
         val access = createJWT(credentials, 60000)
         val refresh = createJWT(credentials, 60000 * 60 * 24)
 
-
+        return authRepository.saveTokens(
+            userId = user.id,
+            accessToken = access,
+            refreshToken = refresh
+        ).fold(
+            onSuccess = { Result.success(it.toDto()) },
+            onFailure = { Result.failure(it) }
+        )
     }
 
     suspend fun registerUser(credentials: CredentialsDto?): Result<BoolResponse> {

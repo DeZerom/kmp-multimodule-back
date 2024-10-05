@@ -16,7 +16,7 @@ object TokenTable : UUIDTable() {
 class TokenDao(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<TokenDao>(TokenTable)
 
-    val userId by TokenTable.userId
-    val accessToken by TokenTable.accessToken
-    val refreshToken by TokenTable.refreshToken
+    var userId by TokenTable.userId
+    var accessToken by TokenTable.accessToken
+    var refreshToken by TokenTable.refreshToken
 }
