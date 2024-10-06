@@ -9,12 +9,11 @@ import ru.dezerom.kmpmm.common.requests.makePost
 import ru.dezerom.kmpmm.common.responds.Response
 import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
+import ru.dezerom.kmpmm.tools.Urls
 import ru.dezerom.kmpmm.tools.createApp
 import ru.dezerom.kmpmm.tools.createCustomClient
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
-private const val URL = "/register"
 
 class RegistrationTest {
 
@@ -23,7 +22,7 @@ class RegistrationTest {
         createApp()
 
         createCustomClient().apply {
-            assertOk(makePost(url = URL, body = CredentialsDto(login = "qwe", password = "qwe")))
+            assertOk(makePost(url = Urls.REG, body = CredentialsDto(login = "qwe", password = "qwe")))
         }
     }
 
@@ -31,13 +30,13 @@ class RegistrationTest {
     fun testWrongCredentials() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertWrongCredentials(makePost(url = URL))
-            assertWrongCredentials(makePost(url = URL, body = CredentialsDto(login = null, password = null)))
-            assertWrongCredentials(makePost(url = URL, body = CredentialsDto(login = "", password = null)))
-            assertWrongCredentials(makePost(url = URL, body = CredentialsDto(login = null, password = "")))
-            assertWrongCredentials(makePost(url = URL, body = CredentialsDto(login = "", password = "")))
-            assertWrongCredentials(makePost(url = URL, body = CredentialsDto(login = "qwe", password = null)))
-            assertWrongCredentials(makePost(url = URL, body = CredentialsDto(login = null, password = "qwe")))
+            assertWrongCredentials(makePost(url = Urls.REG))
+            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = null, password = null)))
+            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = "", password = null)))
+            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = null, password = "")))
+            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = "", password = "")))
+            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = "qwe", password = null)))
+            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = null, password = "qwe")))
         }
     }
 
@@ -45,9 +44,9 @@ class RegistrationTest {
     fun testMultipleRegistration() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertOk(makePost(url = URL, body = CredentialsDto(login = "asd", password = "asd")))
-            assertAlreadyExists(makePost(url = URL, body = CredentialsDto(login = "asd", password = "qwe")))
-            assertAlreadyExists(makePost(url = URL, body = CredentialsDto(login = "asd", password = "asd")))
+            assertOk(makePost(url = Urls.REG, body = CredentialsDto(login = "asd", password = "asd")))
+            assertAlreadyExists(makePost(url = Urls.REG, body = CredentialsDto(login = "asd", password = "qwe")))
+            assertAlreadyExists(makePost(url = Urls.REG, body = CredentialsDto(login = "asd", password = "asd")))
         }
     }
 

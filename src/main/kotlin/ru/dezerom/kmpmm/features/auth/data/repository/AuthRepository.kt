@@ -10,6 +10,10 @@ class AuthRepository(
     private val userSource: UserSource,
     private val tokenSource: TokenSource,
 ) {
+    suspend fun checkToken(userId: UUID, token: String): Result<Boolean> {
+        return tokenSource.getToken(userId, token).map { it != null }
+    }
+
     suspend fun saveTokens(
         userId: UUID,
         accessToken: String,
