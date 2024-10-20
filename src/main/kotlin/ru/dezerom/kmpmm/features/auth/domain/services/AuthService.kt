@@ -3,49 +3,32 @@ package ru.dezerom.kmpmm.features.auth.domain.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
-import io.ktor.server.auth.jwt.*
+import ru.dezerom.kmpmm.Config
 import ru.dezerom.kmpmm.Secrets
 import ru.dezerom.kmpmm.common.constants.StringConst
 import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.common.responds.errors.ResponseError
+import ru.dezerom.kmpmm.common.utils.security.UUIDPrinciple
 import ru.dezerom.kmpmm.common.utils.sha256Hash
 import ru.dezerom.kmpmm.features.auth.data.repository.AuthRepository
 import ru.dezerom.kmpmm.features.auth.domain.mapper.toDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.UserDto
-import ru.dezerom.kmpmm.plugins.JWT_LOGIN_CLAIM
+import ru.dezerom.kmpmm.plugins.JWT_ID_CLAIM
 import java.util.*
 
 class AuthService(
     private val authRepository: AuthRepository,
+    private val config: Config
 ) {
-    suspend fun getUser(token: String?): Result<UserDto> {
-        val login = token?.getClaim(JWT_LOGIN_CLAIM, String::class) ?: return  Result.failure(
-            ResponseError(StringConst.Errors.NO_USER, HttpStatusCode.BadRequest)
+    suspend fun getUser(token: UUIDPrinciple?): Result<UserDto> {
+        if (token == null) return Result.failure(
+            ResponseError(StringConst.Errors.AUTH_ERROR, HttpStatusCode.Unauthorized)
         )
 
-        val user = authRepository.getUserByLogin(login).fold(
-            onSuccess = { it },
-            onFailure = { return Result.failure(it) }
-        )
-
-        if (user == null) {
-            return Result.failure(
-                ResponseError(StringConst.Errors.NO_USER, HttpStatusCode.BadRequest)
-            )
-        }
-
-        authRepository.checkToken(user.id, "token.").fold(
-            onSuccess = {
-                if (it) {
-                    return Result.success(user.toDto())
-                } else {
-                    return Result.failure(
-                        ResponseError(StringConst.Errors.AUTH_ERROR, HttpStatusCode.Unauthorized)
-                    )
-                }
-            },
+        return authRepository.getUserById(token.uuid).fold(
+            onSuccess = { Result.success(it.toDto()) },
             onFailure = { return Result.failure(it) }
         )
     }
@@ -70,8 +53,8 @@ class AuthService(
             ))
         }
 
-        val access = createJWT(credentials, 60000)
-        val refresh = createJWT(credentials, 60000 * 60 * 24)
+        val access = createJWT(user.id.toString(), config.accessTokenLiveLength)
+        val refresh = createJWT(user.id.toString(), config.refreshTokenLiveLength)
 
         return authRepository.saveTokens(
             userId = user.id,
@@ -115,10 +98,10 @@ class AuthService(
         )
     }
 
-    private fun createJWT(credentials: CredentialsDto, liveLength: Long): String {
+    private fun createJWT(userId: String, liveLength: Long): String {
         return JWT.create()
             .withIssuer(Secrets.JWT_ISSUER)
-            .withClaim(JWT_LOGIN_CLAIM, credentials.login)
+            .withClaim(JWT_ID_CLAIM, userId)
             .withExpiresAt(Date(System.currentTimeMillis() + liveLength))
             .sign(Algorithm.HMAC256(Secrets.JWT_SECRET))
     }

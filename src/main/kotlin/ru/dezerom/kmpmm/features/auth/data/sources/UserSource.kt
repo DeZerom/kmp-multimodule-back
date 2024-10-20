@@ -7,8 +7,16 @@ import ru.dezerom.kmpmm.features.auth.data.tables.UserDao
 import ru.dezerom.kmpmm.features.auth.data.tables.UserTable
 import ru.dezerom.kmpmm.features.auth.domain.mapper.toDomain
 import ru.dezerom.kmpmm.features.auth.domain.models.UserModel
+import java.util.*
 
 class UserSource {
+
+    suspend fun getUser(id: UUID): Result<UserModel> = safeSuspendTransaction(
+        errorMessage = StringConst.Errors.CANNOT_GET_USER,
+        errorCode = HttpStatusCode.InternalServerError
+    ) {
+        UserDao[id].toDomain()
+    }
 
     suspend fun getUser(login: String): Result<UserModel?> = safeSuspendTransaction(
         errorMessage = StringConst.Errors.CANNOT_GET_USER,

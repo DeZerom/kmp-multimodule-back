@@ -22,6 +22,10 @@ class AuthRepository(
         return tokenSource.saveTokens(userId, accessToken, refreshToken)
     }
 
+    suspend fun getUserById(userId: UUID): Result<UserModel> {
+        return userSource.getUser(userId)
+    }
+
     suspend fun getUserByLogin(login: String): Result<UserModel?> {
         return userSource.getUser(login)
     }

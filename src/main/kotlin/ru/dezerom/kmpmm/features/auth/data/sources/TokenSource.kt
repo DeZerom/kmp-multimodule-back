@@ -30,7 +30,7 @@ class TokenSource {
             errorCode = HttpStatusCode.Unauthorized
         ) {
             TokenDao.find {
-                (TokenTable.id eq userId) and
+                (TokenTable.userId eq userId) and
                         (TokenTable.accessToken eq accessToken)
             }.firstOrNull()?.toDomain()
         }

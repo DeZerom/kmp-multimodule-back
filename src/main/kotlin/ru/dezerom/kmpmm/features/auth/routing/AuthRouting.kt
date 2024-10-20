@@ -22,9 +22,9 @@ fun Application.configureAuthRoutes() {
         }
 
         authenticate(JWT_AUTH_TOKEN) {
-//            get("/me") {
-//                call.makeResponse { authService.getUser(call.) }
-//            }
+            get("/me") {
+                call.makeResponse { authService.getUser(call.principal()) }
+            }
         }
 
     }
