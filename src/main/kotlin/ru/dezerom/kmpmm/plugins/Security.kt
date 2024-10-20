@@ -30,14 +30,9 @@ private const val BEARER = "Bearer "
 fun Application.configureSecurity() {
     val authRepository: AuthRepository by inject()
 
-    val verifier = JWT
-        .require(Algorithm.HMAC256(Secrets.JWT_SECRET))
-        .withIssuer(Secrets.JWT_ISSUER)
-        .build()
-
     authentication {
         jwt(JWT_AUTH_TOKEN) {
-            verifier(verifier)
+            verifier(getVerifier(false))
 
             validate { jwtCredential ->
                 val id = getUserId(jwtCredential) ?: return@validate null
@@ -65,7 +60,7 @@ fun Application.configureSecurity() {
         }
 
         jwt(JWT_REFRESH_TOKEN) {
-            verifier(verifier)
+            verifier(getVerifier(true))
 
             validate { jwtCredential ->
                 val id = getUserId(jwtCredential) ?: return@validate null
@@ -90,6 +85,12 @@ fun Application.configureSecurity() {
         }
     }
 }
+
+private fun getVerifier(isRefresh: Boolean) = JWT
+    .require(Algorithm.HMAC256(Secrets.JWT_SECRET))
+    .withIssuer(Secrets.JWT_ISSUER)
+    .withClaim(JWT_IS_REFRESH, isRefresh)
+    .build()
 
 private fun getUserId(jwtCredential: JWTCredential): String? {
     return jwtCredential.getClaim(JWT_ID_CLAIM, String::class) ?: run {

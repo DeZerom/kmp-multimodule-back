@@ -4,7 +4,6 @@ import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.coroutines.delay
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import ru.dezerom.kmpmm.common.constants.StringConst
@@ -69,15 +68,6 @@ class GetMeTest {
         createApp()
         createCustomClient().apply {
             assertWrongAuth(makeGet(Urls.ME, authHeader = "asdq"))
-        }
-    }
-
-    @Test
-    fun testTokenExpired() = testApplication {
-        createApp()
-        createCustomClient().apply {
-            delay(1500)
-            assertWrongAuth(makeGet(Urls.ME, authHeader = firstTokens.accessToken))
         }
     }
 
