@@ -1,4 +1,4 @@
-package ru.dezerom.kmpmm
+package ru.dezerom.kmpmm.auth
 
 import io.ktor.client.call.*
 import io.ktor.client.statement.*

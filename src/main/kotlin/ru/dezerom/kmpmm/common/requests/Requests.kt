@@ -23,3 +23,13 @@ suspend inline fun <reified T> HttpClient.makePost(
     }
     setBody(body)
 }
+
+suspend fun HttpClient.makeGet(
+    url: String,
+    authHeader: String? = null
+) = get {
+    url(url)
+    headers {
+        authHeader?.let { bearerAuth(authHeader) }
+    }
+}
