@@ -8,6 +8,7 @@ import org.koin.ktor.ext.inject
 import ru.dezerom.kmpmm.common.utils.makeResponse
 import ru.dezerom.kmpmm.features.auth.domain.services.AuthService
 import ru.dezerom.kmpmm.plugins.JWT_AUTH_TOKEN
+import ru.dezerom.kmpmm.plugins.JWT_REFRESH_TOKEN
 
 fun Application.configureAuthRoutes() {
     val authService: AuthService by inject()
@@ -19,6 +20,12 @@ fun Application.configureAuthRoutes() {
 
         post("/auth") {
             call.makeResponse { authService.authorizeUser(call.receiveNullable()) }
+        }
+
+        authenticate(JWT_REFRESH_TOKEN) {
+            post("/refresh") {
+                call.makeResponse { authService.refreshTokens(call.principal()) }
+            }
         }
 
         authenticate(JWT_AUTH_TOKEN) {

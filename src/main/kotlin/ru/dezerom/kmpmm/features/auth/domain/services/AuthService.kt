@@ -8,7 +8,8 @@ import ru.dezerom.kmpmm.Secrets
 import ru.dezerom.kmpmm.common.constants.StringConst
 import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.common.responds.errors.ResponseError
-import ru.dezerom.kmpmm.common.utils.security.UUIDPrinciple
+import ru.dezerom.kmpmm.common.utils.security.UserIdAndTokenIdPrinciple
+import ru.dezerom.kmpmm.common.utils.security.UserIdPrinciple
 import ru.dezerom.kmpmm.common.utils.sha256Hash
 import ru.dezerom.kmpmm.features.auth.data.repository.AuthRepository
 import ru.dezerom.kmpmm.features.auth.domain.mapper.toDto
@@ -16,18 +17,32 @@ import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.UserDto
 import ru.dezerom.kmpmm.plugins.JWT_ID_CLAIM
+import ru.dezerom.kmpmm.plugins.JWT_IS_REFRESH
 import java.util.*
 
 class AuthService(
     private val authRepository: AuthRepository,
     private val config: Config
 ) {
-    suspend fun getUser(token: UUIDPrinciple?): Result<UserDto> {
+    suspend fun refreshTokens(principle: UserIdAndTokenIdPrinciple?): Result<TokensDto> {
+        if (principle == null) return Result.failure(
+            ResponseError(StringConst.Errors.AUTH_ERROR, HttpStatusCode.Unauthorized)
+        )
+
+        authRepository.deleteTokens(principle.tokenId).fold(
+            onSuccess = {},
+            onFailure = { return Result.failure(it) }
+        )
+
+        return saveTokens(principle.userId)
+    }
+
+    suspend fun getUser(token: UserIdPrinciple?): Result<UserDto> {
         if (token == null) return Result.failure(
             ResponseError(StringConst.Errors.AUTH_ERROR, HttpStatusCode.Unauthorized)
         )
 
-        return authRepository.getUserById(token.uuid).fold(
+        return authRepository.getUserById(token.id).fold(
             onSuccess = { Result.success(it.toDto()) },
             onFailure = { return Result.failure(it) }
         )
@@ -53,17 +68,7 @@ class AuthService(
             ))
         }
 
-        val access = createJWT(user.id.toString(), config.accessTokenLiveLength)
-        val refresh = createJWT(user.id.toString(), config.refreshTokenLiveLength)
-
-        return authRepository.saveTokens(
-            userId = user.id,
-            accessToken = access,
-            refreshToken = refresh
-        ).fold(
-            onSuccess = { Result.success(it.toDto()) },
-            onFailure = { Result.failure(it) }
-        )
+        return saveTokens(user.id)
     }
 
     suspend fun registerUser(credentials: CredentialsDto?): Result<BoolResponse> {
@@ -98,10 +103,30 @@ class AuthService(
         )
     }
 
-    private fun createJWT(userId: String, liveLength: Long): String {
+    private suspend fun saveTokens(userId: UUID): Result<TokensDto> {
+        val access = createJWT(userId.toString(), false)
+        val refresh = createJWT(userId.toString(), true)
+
+        return authRepository.saveTokens(
+            userId = userId,
+            accessToken = access,
+            refreshToken = refresh
+        ).fold(
+            onSuccess = { Result.success(it.toDto()) },
+            onFailure = { Result.failure(it) }
+        )
+    }
+
+    private fun createJWT(userId: String, isRefresh: Boolean): String {
+        val liveLength = if (isRefresh)
+            config.refreshTokenLiveLength
+        else
+            config.accessTokenLiveLength
+
         return JWT.create()
             .withIssuer(Secrets.JWT_ISSUER)
             .withClaim(JWT_ID_CLAIM, userId)
+            .withClaim(JWT_IS_REFRESH, isRefresh)
             .withExpiresAt(Date(System.currentTimeMillis() + liveLength))
             .sign(Algorithm.HMAC256(Secrets.JWT_SECRET))
     }

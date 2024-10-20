@@ -10,6 +10,14 @@ class AuthRepository(
     private val userSource: UserSource,
     private val tokenSource: TokenSource,
 ) {
+    suspend fun deleteTokens(tokensId: UUID): Result<Boolean> {
+        return tokenSource.deleteTokens(tokensId).map { it >= 0 }
+    }
+
+    suspend fun getTokensId(userId: UUID, refreshToken: String): Result<UUID?> {
+        return tokenSource.getTokenByRefreshToken(userId, refreshToken).map { it?.id }
+    }
+
     suspend fun checkToken(userId: UUID, token: String): Result<Boolean> {
         return tokenSource.getToken(userId, token).map { it != null }
     }
