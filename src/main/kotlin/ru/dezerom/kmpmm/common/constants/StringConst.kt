@@ -10,5 +10,7 @@ object StringConst {
         const val AUTH_ERROR = "Ошибка авторизации"
         const val NO_USER = "Такого пользователя не существует"
         const val INTERNAL_ERROR = "Внутренняя ошибка"
+
+        const val NO_DATA = "Данные не переданы"
     }
 }

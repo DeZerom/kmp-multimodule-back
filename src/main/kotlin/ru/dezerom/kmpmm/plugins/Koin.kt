@@ -10,6 +10,9 @@ import ru.dezerom.kmpmm.features.auth.data.repository.AuthRepository
 import ru.dezerom.kmpmm.features.auth.data.sources.TokenSource
 import ru.dezerom.kmpmm.features.auth.data.sources.UserSource
 import ru.dezerom.kmpmm.features.auth.domain.services.AuthService
+import ru.dezerom.kmpmm.features.tasks.data.repository.TaskRepository
+import ru.dezerom.kmpmm.features.tasks.data.sources.TaskSource
+import ru.dezerom.kmpmm.features.tasks.domain.services.TasksService
 
 fun Application.configureKoin(
     appConfig: ApplicationConfig = environment.config
@@ -18,7 +21,8 @@ fun Application.configureKoin(
         slf4jLogger()
         modules(
             configModule(appConfig),
-            authModule
+            authModule,
+            tasksModule
         )
     }
 }
@@ -32,4 +36,10 @@ private val authModule = module {
     single { TokenSource() }
     single { AuthRepository(userSource = get(), tokenSource = get()) }
     single { AuthService(authRepository = get(), config = get()) }
+}
+
+private val tasksModule = module {
+    single { TaskSource() }
+    single { TaskRepository(get()) }
+    single { TasksService(get()) }
 }
