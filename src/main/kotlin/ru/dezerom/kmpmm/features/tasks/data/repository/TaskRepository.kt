@@ -18,7 +18,20 @@ class TaskRepository(
         return source.createTask(userId, name, description, deadline).map { BoolResponse(true) }
     }
 
+    suspend fun editTask(
+        taskId: UUID,
+        newName: String,
+        newDescription: String?,
+        newDeadline: Long?,
+    ): Result<BoolResponse> {
+        return source.editTask(taskId, newName, newDescription, newDeadline).map { BoolResponse(it) }
+    }
+
     suspend fun getTasks(userId: UUID): Result<List<TaskModel>> {
         return source.getTasks(userId).map { list -> list.map { it.toDomain() } }
+    }
+
+    suspend fun getTask(taskId: UUID): Result<TaskModel> {
+        return source.getTask(taskId).map { it.toDomain() }
     }
 }

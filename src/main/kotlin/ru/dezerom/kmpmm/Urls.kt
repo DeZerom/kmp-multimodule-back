@@ -14,6 +14,7 @@ internal object Urls {
         private const val PREFIX = "/tasks/"
 
         const val CREATE = "${PREFIX}create"
+        const val EDIT = "${PREFIX}edit"
         const val GET_ALL = "${PREFIX}all"
     }
 }

@@ -19,6 +19,10 @@ fun Application.configureTasksRouting() {
                 call.makeResponse { tasksService.createTask(call.principal(), call.receiveNullable()) }
             }
 
+            post(Urls.Tasks.EDIT) {
+                call.makeResponse { tasksService.editTask(call.principal(), call.receiveNullable()) }
+            }
+
             get(Urls.Tasks.GET_ALL) {
                 call.makeResponse { tasksService.getTasks(call.principal()) }
             }

@@ -12,5 +12,7 @@ object StringConst {
         const val INTERNAL_ERROR = "Внутренняя ошибка"
 
         const val NO_DATA = "Данные не переданы"
+        const val WRONG_DATA_FORMAT = "Некорректный формат данных"
+        const val NO_SUCH_DATA = "Таких данных не существует"
     }
 }
