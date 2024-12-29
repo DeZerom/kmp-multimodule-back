@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EditTaskDto(
-    val id: String?,
-    val name: String?,
-    val description: String?,
-    val deadline: Long?
+    val id: String? = null,
+    val name: String? = null,
+    val description: String? = null,
+    val deadline: Long? = null
 )
