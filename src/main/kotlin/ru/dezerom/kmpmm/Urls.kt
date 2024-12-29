@@ -16,5 +16,6 @@ internal object Urls {
         const val CREATE = "${PREFIX}create"
         const val EDIT = "${PREFIX}edit"
         const val GET_ALL = "${PREFIX}all"
+        const val CHANGE_COMPLETE_STATUS = "${PREFIX}change_complete"
     }
 }

@@ -27,6 +27,14 @@ class TaskRepository(
         return source.editTask(taskId, newName, newDescription, newDeadline).map { BoolResponse(it) }
     }
 
+    suspend fun changeCompletedStatus(
+        taskId: UUID,
+        newStatus: Boolean,
+        time: Long?
+    ): Result<BoolResponse> {
+        return source.changeCompletedStatus(taskId, newStatus, time).map { BoolResponse(it) }
+    }
+
     suspend fun getTasks(userId: UUID): Result<List<TaskModel>> {
         return source.getTasks(userId).map { list -> list.map { it.toDomain() } }
     }

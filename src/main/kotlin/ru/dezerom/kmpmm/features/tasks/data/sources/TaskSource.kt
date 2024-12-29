@@ -47,6 +47,20 @@ class TaskSource {
         } > 0
     }
 
+    suspend fun changeCompletedStatus(
+        taskId: UUID,
+        newStatus: Boolean,
+        newCompletedAt: Long?
+    ): Result<Boolean> = safeSuspendTransaction(
+        errorCode = HttpStatusCode.InternalServerError,
+        errorMessage = StringConst.Errors.INTERNAL_ERROR,
+    ) {
+        TaskTable.update(where = { TaskTable.id eq taskId }) {
+            it[isCompleted] = newStatus
+            it[completedAt] = newCompletedAt
+        } > 0
+    }
+
     suspend fun getTasks(userId: UUID): Result<List<TaskDao>> = safeSuspendTransaction(
         errorCode = HttpStatusCode.InternalServerError,
         errorMessage = StringConst.Errors.INTERNAL_ERROR

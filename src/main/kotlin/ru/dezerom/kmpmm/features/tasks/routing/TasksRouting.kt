@@ -10,6 +10,8 @@ import ru.dezerom.kmpmm.common.utils.makeResponse
 import ru.dezerom.kmpmm.features.tasks.domain.services.TasksService
 import ru.dezerom.kmpmm.plugins.JWT_AUTH_TOKEN
 
+private const val TASK_ID_PARAM = "id"
+
 fun Application.configureTasksRouting() {
     val tasksService: TasksService by inject()
 
@@ -21,6 +23,12 @@ fun Application.configureTasksRouting() {
 
             post(Urls.Tasks.EDIT) {
                 call.makeResponse { tasksService.editTask(call.principal(), call.receiveNullable()) }
+            }
+
+            patch("${Urls.Tasks.CHANGE_COMPLETE_STATUS}/{$TASK_ID_PARAM}") {
+                call.makeResponse {
+                    tasksService.changeCompleteStatus(call.principal(), call.parameters[TASK_ID_PARAM])
+                }
             }
 
             get(Urls.Tasks.GET_ALL) {
