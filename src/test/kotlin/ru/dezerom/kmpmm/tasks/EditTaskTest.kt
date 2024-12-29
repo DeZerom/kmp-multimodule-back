@@ -1,13 +1,9 @@
 package ru.dezerom.kmpmm.tasks
 
-import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import ru.dezerom.kmpmm.Urls
-import ru.dezerom.kmpmm.common.constants.StringConst
-import ru.dezerom.kmpmm.common.requests.makeGet
 import ru.dezerom.kmpmm.common.requests.makePost
 import ru.dezerom.kmpmm.common.responds.Response
 import ru.dezerom.kmpmm.common.responds.common.BoolResponse
@@ -16,10 +12,11 @@ import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.create.CreateTaskDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.edit.EditTaskDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.get.GetTaskDto
-import ru.dezerom.kmpmm.features.tasks.routing.dto.get.GetTasksDto
-import ru.dezerom.kmpmm.tools.createApp
-import ru.dezerom.kmpmm.tools.createCustomClient
-import kotlin.test.*
+import ru.dezerom.kmpmm.tools.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class EditTaskTest {
     private val creds1 = CredentialsDto("edit_tast_test_1_1", "123edasf")
@@ -41,8 +38,8 @@ class EditTaskTest {
             makePost(Urls.Auth.REGISTER, creds2)
             tokens2 = makePost(Urls.Auth.AUTHORIZE, creds2).body<Response<TokensDto>>().body
 
-            task1 = createAndGet(CreateTaskDto(name = "qwe"), tokens1.accessToken)
-            task2 = createAndGet(CreateTaskDto(name = "asd"), tokens2.accessToken)
+            task1 = createAndGetTask(CreateTaskDto(name = "qwe"), tokens1.accessToken)
+            task2 = createAndGetTask(CreateTaskDto(name = "asd"), tokens2.accessToken)
         }
     }
 
@@ -50,7 +47,7 @@ class EditTaskTest {
     fun noData() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertsNoData(
+            assertNoData(
                 makePost<EditTaskDto?>(
                     Urls.Tasks.EDIT,
                     null,
@@ -58,7 +55,7 @@ class EditTaskTest {
                 )
             )
 
-            assertsNoData(
+            assertNoData(
                 makePost(
                     Urls.Tasks.EDIT,
                     EditTaskDto(),
@@ -66,7 +63,7 @@ class EditTaskTest {
                 )
             )
 
-            assertsNoData(
+            assertNoData(
                 makePost(
                     Urls.Tasks.EDIT,
                     EditTaskDto(id = ""),
@@ -74,7 +71,7 @@ class EditTaskTest {
                 )
             )
 
-            assertsNoData(
+            assertNoData(
                 makePost(
                     Urls.Tasks.EDIT,
                     EditTaskDto(name = ""),
@@ -82,7 +79,7 @@ class EditTaskTest {
                 )
             )
 
-            assertsNoData(
+            assertNoData(
                 makePost(
                     Urls.Tasks.EDIT,
                     EditTaskDto(id = "", name = ""),
@@ -163,35 +160,5 @@ class EditTaskTest {
             assertEquals(editTask.description, editedTask.description)
             assertEquals(editTask.deadline, editedTask.deadline)
         }
-    }
-
-    private suspend fun assertsNoData(response: HttpResponse) =
-        assertError(response, HttpStatusCode.BadRequest, StringConst.Errors.NO_DATA)
-
-    private suspend fun assertWrongDataFormat(response: HttpResponse) =
-        assertError(response, HttpStatusCode.BadRequest, StringConst.Errors.WRONG_DATA_FORMAT)
-
-    private suspend fun assertNotFound(response: HttpResponse) =
-        assertError(response, HttpStatusCode.NotFound, StringConst.Errors.NO_SUCH_DATA)
-
-    private suspend fun assertAccessDenied(response: HttpResponse) =
-        assertError(response, HttpStatusCode.Forbidden, StringConst.Errors.AUTH_ERROR)
-
-    private suspend fun assertError(response: HttpResponse, status: HttpStatusCode, message: String) {
-        assertEquals(status, response.status)
-
-        val body = response.body<Response<String>>()
-        assertFalse(body.success)
-        assertEquals(message, body.body)
-    }
-
-    private suspend fun HttpClient.createAndGet(task: CreateTaskDto, token: String): GetTaskDto {
-        makePost(Urls.Tasks.CREATE, task, token)
-
-        return getTask(token)
-    }
-
-    private suspend fun HttpClient.getTask(token: String): GetTaskDto {
-        return makeGet(Urls.Tasks.GET_ALL, token).body<Response<GetTasksDto>>().body.tasks.first()
     }
 }

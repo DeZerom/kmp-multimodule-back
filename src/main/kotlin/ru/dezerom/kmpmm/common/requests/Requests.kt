@@ -30,8 +30,31 @@ suspend fun HttpClient.makeGet(
     }
 }
 
+suspend fun HttpClient.makePatch(
+    url: String,
+    authHeader: String? = null,
+) = patch {
+    url(url)
+    setDefaultHeaders(authHeader)
+}
+
+suspend inline fun <reified T> HttpClient.makePatch(
+    url: String,
+    body: T,
+    authHeader: String? = null,
+) = patch {
+    url(url)
+    setDefaultHeaders(authHeader)
+
+    if (body != null) setBody(body)
+}
+
 fun HttpRequestBuilder.basePostSettings(url: String, authHeader: String?) {
     url(url)
+    setDefaultHeaders(authHeader)
+}
+
+fun HttpRequestBuilder.setDefaultHeaders(authHeader: String?) {
     headers {
         accept(ContentType.Application.Json)
         contentType(ContentType.Application.Json)
