@@ -49,24 +49,24 @@ class RefreshTokenTest {
     fun prepareData() = testApplication {
         createApp()
         createCustomClient().apply {
-            makePost(Urls.REG, creds1)
-            makePost(Urls.REG, creds2)
-            makePost(Urls.REG, creds3)
-            makePost(Urls.REG, creds6)
-            makePost(Urls.REG, creds7)
+            makePost(Urls.Auth.REGISTER, creds1)
+            makePost(Urls.Auth.REGISTER, creds2)
+            makePost(Urls.Auth.REGISTER, creds3)
+            makePost(Urls.Auth.REGISTER, creds6)
+            makePost(Urls.Auth.REGISTER, creds7)
 
-            tokens1 = makePost(Urls.AUTH, creds1).body<Response<TokensDto>>().body
-            tokens2 = makePost(Urls.AUTH, creds2).body<Response<TokensDto>>().body
-            tokens3 = makePost(Urls.AUTH, creds3).body<Response<TokensDto>>().body
-            tokens6 = makePost(Urls.AUTH, creds6).body<Response<TokensDto>>().body
-            tokens7 = makePost(Urls.AUTH, creds7).body<Response<TokensDto>>().body
+            tokens1 = makePost(Urls.Auth.AUTHORIZE, creds1).body<Response<TokensDto>>().body
+            tokens2 = makePost(Urls.Auth.AUTHORIZE, creds2).body<Response<TokensDto>>().body
+            tokens3 = makePost(Urls.Auth.AUTHORIZE, creds3).body<Response<TokensDto>>().body
+            tokens6 = makePost(Urls.Auth.AUTHORIZE, creds6).body<Response<TokensDto>>().body
+            tokens7 = makePost(Urls.Auth.AUTHORIZE, creds7).body<Response<TokensDto>>().body
 
             delay(1500)
-            assertWrongAuth(makeGet(Urls.ME, authHeader = tokens1.accessToken))
-            assertWrongAuth(makeGet(Urls.ME, authHeader = tokens2.accessToken))
-            assertWrongAuth(makeGet(Urls.ME, authHeader = tokens3.accessToken))
-            assertWrongAuth(makeGet(Urls.ME, authHeader = tokens6.accessToken))
-            assertWrongAuth(makeGet(Urls.ME, authHeader = tokens7.accessToken))
+            assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens1.accessToken))
+            assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens2.accessToken))
+            assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens3.accessToken))
+            assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens6.accessToken))
+            assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens7.accessToken))
         }
     }
 
@@ -74,14 +74,14 @@ class RefreshTokenTest {
     fun testRefresh() = testApplication {
         createApp()
         createCustomClient().apply {
-            tokens1 = assertOk(makePost(Urls.REFRESH, authHeader = tokens1.refreshToken))
-            tokens2 = assertOk(makePost(Urls.REFRESH, authHeader = tokens2.refreshToken))
+            tokens1 = assertOk(makePost(Urls.Auth.REFRESH, authHeader = tokens1.refreshToken))
+            tokens2 = assertOk(makePost(Urls.Auth.REFRESH, authHeader = tokens2.refreshToken))
 
             assertNotEquals(tokens1.accessToken, tokens2.accessToken)
             assertNotEquals(tokens1.refreshToken, tokens2.refreshToken)
 
-            val user1 = assertWorks(makeGet(Urls.ME, authHeader = tokens1.accessToken))
-            val user2 = assertWorks(makeGet(Urls.ME, authHeader = tokens2.accessToken))
+            val user1 = assertWorks(makeGet(Urls.Auth.ME, authHeader = tokens1.accessToken))
+            val user2 = assertWorks(makeGet(Urls.Auth.ME, authHeader = tokens2.accessToken))
 
             assertEquals(user1.login, creds1.login)
             assertEquals(user2.login, creds2.login)
@@ -92,9 +92,9 @@ class RefreshTokenTest {
     fun testWrongRefreshToken() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertWrongAuth(makePost(Urls.REFRESH))
-            assertWrongAuth(makePost(Urls.REFRESH, authHeader = "qnsjoqdsalnd"))
-            assertWrongAuth(makePost(Urls.REFRESH, authHeader = tokens3.accessToken))
+            assertWrongAuth(makePost(Urls.Auth.REFRESH))
+            assertWrongAuth(makePost(Urls.Auth.REFRESH, authHeader = "qnsjoqdsalnd"))
+            assertWrongAuth(makePost(Urls.Auth.REFRESH, authHeader = tokens3.accessToken))
         }
     }
 
@@ -102,8 +102,8 @@ class RefreshTokenTest {
     fun testDoubleUseRefreshToken() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertOk(makePost(Urls.REFRESH, authHeader = tokens6.refreshToken))
-            assertWrongAuth(makePost(Urls.REFRESH, authHeader = tokens6.refreshToken))
+            assertOk(makePost(Urls.Auth.REFRESH, authHeader = tokens6.refreshToken))
+            assertWrongAuth(makePost(Urls.Auth.REFRESH, authHeader = tokens6.refreshToken))
         }
     }
 
@@ -111,10 +111,10 @@ class RefreshTokenTest {
     fun testWorksAfterError() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertWrongAuth(makePost(Urls.REFRESH, authHeader = "tokens7.refreshToken"))
-            tokens7 = assertOk(makePost(Urls.REFRESH, authHeader = tokens7.refreshToken))
+            assertWrongAuth(makePost(Urls.Auth.REFRESH, authHeader = "tokens7.refreshToken"))
+            tokens7 = assertOk(makePost(Urls.Auth.REFRESH, authHeader = tokens7.refreshToken))
 
-            assertWorks(makeGet(Urls.ME, authHeader = tokens7.accessToken))
+            assertWorks(makeGet(Urls.Auth.ME, authHeader = tokens7.accessToken))
         }
     }
 

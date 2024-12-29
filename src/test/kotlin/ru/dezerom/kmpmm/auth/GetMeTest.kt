@@ -32,11 +32,11 @@ class GetMeTest {
     fun prepareData() = testApplication {
         createApp()
         createCustomClient().apply {
-            makePost(Urls.REG, firstCreds)
-            makePost(Urls.REG, secondCreds)
+            makePost(Urls.Auth.REGISTER, firstCreds)
+            makePost(Urls.Auth.REGISTER, secondCreds)
 
-            firstTokens = makePost(Urls.AUTH, firstCreds).body<Response<TokensDto>>().body
-            secondTokens = makePost(Urls.AUTH, secondCreds).body<Response<TokensDto>>().body
+            firstTokens = makePost(Urls.Auth.AUTHORIZE, firstCreds).body<Response<TokensDto>>().body
+            secondTokens = makePost(Urls.Auth.AUTHORIZE, secondCreds).body<Response<TokensDto>>().body
         }
     }
 
@@ -44,8 +44,8 @@ class GetMeTest {
     fun testGetMe() = testApplication {
         createApp()
         createCustomClient().apply {
-            val f = assertOk(makeGet(Urls.ME, authHeader = firstTokens.accessToken))
-            val s = assertOk(makeGet(Urls.ME, authHeader = secondTokens.accessToken))
+            val f = assertOk(makeGet(Urls.Auth.ME, authHeader = firstTokens.accessToken))
+            val s = assertOk(makeGet(Urls.Auth.ME, authHeader = secondTokens.accessToken))
 
             assertEquals(firstCreds.login,  f.login)
             assertEquals(secondCreds.login, s.login)
@@ -59,7 +59,7 @@ class GetMeTest {
     fun testNoAuth() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertWrongAuth(makeGet(Urls.ME))
+            assertWrongAuth(makeGet(Urls.Auth.ME))
         }
     }
 
@@ -67,7 +67,7 @@ class GetMeTest {
     fun testWrongAuthHeader() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertWrongAuth(makeGet(Urls.ME, authHeader = "asdq"))
+            assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = "asdq"))
         }
     }
 

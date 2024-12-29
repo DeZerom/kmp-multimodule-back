@@ -22,7 +22,7 @@ class RegistrationTest {
         createApp()
 
         createCustomClient().apply {
-            assertOk(makePost(url = Urls.REG, body = CredentialsDto(login = "qwe", password = "qwe")))
+            assertOk(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "qwe", password = "qwe")))
         }
     }
 
@@ -30,13 +30,13 @@ class RegistrationTest {
     fun testWrongCredentials() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertWrongCredentials(makePost(url = Urls.REG))
-            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = null, password = null)))
-            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = "", password = null)))
-            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = null, password = "")))
-            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = "", password = "")))
-            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = "qwe", password = null)))
-            assertWrongCredentials(makePost(url = Urls.REG, body = CredentialsDto(login = null, password = "qwe")))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = null, password = null)))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "", password = null)))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = null, password = "")))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "", password = "")))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "qwe", password = null)))
+            assertWrongCredentials(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = null, password = "qwe")))
         }
     }
 
@@ -44,9 +44,9 @@ class RegistrationTest {
     fun testMultipleRegistration() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertOk(makePost(url = Urls.REG, body = CredentialsDto(login = "asd", password = "asd")))
-            assertAlreadyExists(makePost(url = Urls.REG, body = CredentialsDto(login = "asd", password = "qwe")))
-            assertAlreadyExists(makePost(url = Urls.REG, body = CredentialsDto(login = "asd", password = "asd")))
+            assertOk(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "asd", password = "asd")))
+            assertAlreadyExists(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "asd", password = "qwe")))
+            assertAlreadyExists(makePost(url = Urls.Auth.REGISTER, body = CredentialsDto(login = "asd", password = "asd")))
         }
     }
 

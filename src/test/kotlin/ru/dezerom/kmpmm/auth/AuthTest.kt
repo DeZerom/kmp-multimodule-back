@@ -26,8 +26,8 @@ class AuthTest {
         createApp()
 
         createCustomClient().apply {
-            makePost(Urls.REG, firstCreds)
-            makePost(Urls.REG, secondCreds)
+            makePost(Urls.Auth.REGISTER, firstCreds)
+            makePost(Urls.Auth.REGISTER, secondCreds)
         }
     }
 
@@ -36,12 +36,12 @@ class AuthTest {
         createApp()
 
         createCustomClient().apply {
-            makePost(Urls.AUTH, firstCreds).apply {
+            makePost(Urls.Auth.AUTHORIZE, firstCreds).apply {
                 assertEquals(HttpStatusCode.OK, status)
                 assertAndReturnBody()
             }
 
-            makePost(Urls.AUTH, secondCreds).apply {
+            makePost(Urls.Auth.AUTHORIZE, secondCreds).apply {
                 assertEquals(HttpStatusCode.OK, status)
                 assertAndReturnBody()
             }
@@ -53,14 +53,14 @@ class AuthTest {
         createApp()
 
         createCustomClient().apply {
-            makePost(Urls.AUTH, CredentialsDto(null, null)).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto("qwe", null)).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto(null, "qwe")).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto("", "")).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto("qwe", "")).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto("", "qwe")).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto(null, "")).assertNoCredentials()
-            makePost(Urls.AUTH, CredentialsDto("", null)).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto(null, null)).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto("qwe", null)).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto(null, "qwe")).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto("", "")).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto("qwe", "")).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto("", "qwe")).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto(null, "")).assertNoCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto("", null)).assertNoCredentials()
         }
     }
 
@@ -69,8 +69,8 @@ class AuthTest {
         createApp()
 
         createCustomClient().apply {
-            makePost(Urls.AUTH, CredentialsDto("qwe", "qwe")).assertWrongCredentials()
-            makePost(Urls.AUTH, CredentialsDto(firstCreds.login, "qwe")).assertWrongCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto("qwe", "qwe")).assertWrongCredentials()
+            makePost(Urls.Auth.AUTHORIZE, CredentialsDto(firstCreds.login, "qwe")).assertWrongCredentials()
         }
     }
 

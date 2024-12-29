@@ -28,8 +28,8 @@ class AddTaskTest {
     fun prepareData() = testApplication {
         createApp()
         createCustomClient().apply {
-            makePost(Urls.REG, creds)
-            tokens = makePost(Urls.AUTH, creds).body<Response<TokensDto>>().body
+            makePost(Urls.Auth.REGISTER, creds)
+            tokens = makePost(Urls.Auth.AUTHORIZE, creds).body<Response<TokensDto>>().body
         }
     }
 
