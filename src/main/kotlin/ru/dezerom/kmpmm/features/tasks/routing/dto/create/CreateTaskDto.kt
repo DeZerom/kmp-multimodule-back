@@ -1,4 +1,4 @@
-package ru.dezerom.kmpmm.features.tasks.routing.dto
+package ru.dezerom.kmpmm.features.tasks.routing.dto.create
 
 import kotlinx.serialization.Serializable
 

@@ -5,12 +5,12 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.Test
+import ru.dezerom.kmpmm.Urls
 import ru.dezerom.kmpmm.common.constants.StringConst
 import ru.dezerom.kmpmm.common.requests.makePost
 import ru.dezerom.kmpmm.common.responds.Response
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
-import ru.dezerom.kmpmm.tools.Urls
 import ru.dezerom.kmpmm.tools.createApp
 import ru.dezerom.kmpmm.tools.createCustomClient
 import kotlin.test.BeforeTest

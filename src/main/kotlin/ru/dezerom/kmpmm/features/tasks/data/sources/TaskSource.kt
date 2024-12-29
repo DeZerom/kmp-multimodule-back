@@ -6,6 +6,7 @@ import ru.dezerom.kmpmm.common.constants.StringConst
 import ru.dezerom.kmpmm.common.db.safeSuspendTransaction
 import ru.dezerom.kmpmm.features.auth.data.tables.UserTable
 import ru.dezerom.kmpmm.features.tasks.data.tables.TaskDao
+import ru.dezerom.kmpmm.features.tasks.data.tables.TaskTable
 import java.util.*
 
 class TaskSource {
@@ -24,5 +25,12 @@ class TaskSource {
             this.description = description
             this.deadline = deadline
         }
+    }
+
+    suspend fun getTasks(userId: UUID): Result<List<TaskDao>> = safeSuspendTransaction(
+        errorCode = HttpStatusCode.InternalServerError,
+        errorMessage = StringConst.Errors.INTERNAL_ERROR
+    ) {
+        TaskDao.find { TaskTable.userId eq userId }.toList()
     }
 }

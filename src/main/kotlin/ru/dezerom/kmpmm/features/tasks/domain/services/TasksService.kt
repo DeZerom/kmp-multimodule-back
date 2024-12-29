@@ -7,7 +7,9 @@ import ru.dezerom.kmpmm.common.responds.errors.ResponseError
 import ru.dezerom.kmpmm.common.utils.security.UserIdPrinciple
 import ru.dezerom.kmpmm.common.utils.security.defaultAuthError
 import ru.dezerom.kmpmm.features.tasks.data.repository.TaskRepository
-import ru.dezerom.kmpmm.features.tasks.routing.dto.CreateTaskDto
+import ru.dezerom.kmpmm.features.tasks.domain.mappers.toDto
+import ru.dezerom.kmpmm.features.tasks.routing.dto.create.CreateTaskDto
+import ru.dezerom.kmpmm.features.tasks.routing.dto.get.GetTasksDto
 
 class TasksService(
     private val repository: TaskRepository
@@ -30,5 +32,11 @@ class TasksService(
             description = task.description,
             deadline = task.deadline
         )
+    }
+
+    suspend fun getTasks(principle: UserIdPrinciple?): Result<GetTasksDto> {
+        if (principle == null) return defaultAuthError()
+
+        return repository.getTasks(principle.id).map { it.toDto() }
     }
 }
