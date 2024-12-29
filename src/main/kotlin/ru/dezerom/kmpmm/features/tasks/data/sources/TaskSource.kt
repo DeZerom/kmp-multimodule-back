@@ -25,6 +25,9 @@ class TaskSource {
             title = name
             this.description = description
             this.deadline = deadline
+            isCompleted = false
+            completedAt = null
+            createdAt = System.currentTimeMillis()
         }
     }
 
@@ -48,7 +51,7 @@ class TaskSource {
         errorCode = HttpStatusCode.InternalServerError,
         errorMessage = StringConst.Errors.INTERNAL_ERROR
     ) {
-        TaskDao.find { TaskTable.userId eq userId }.toList()
+        TaskDao.find { TaskTable.userId eq userId }.sortedBy { it.createdAt }
     }
 
     suspend fun getTask(taskId: UUID): Result<TaskDao> = safeSuspendTransaction(

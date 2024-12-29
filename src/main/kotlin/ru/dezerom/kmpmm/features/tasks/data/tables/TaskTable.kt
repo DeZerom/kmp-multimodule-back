@@ -13,6 +13,9 @@ object TaskTable: UUIDTable() {
     val title = text("name")
     val description = text("description").nullable()
     val deadline = long("deadline").nullable()
+    val isCompleted = bool("is_completed").default(false)
+    val completedAt = long("completed_at").nullable()
+    val createdAt = long("created_at").default(System.currentTimeMillis())
 }
 
 class TaskDao(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -22,4 +25,7 @@ class TaskDao(id: EntityID<UUID>) : UUIDEntity(id) {
     var title by TaskTable.title
     var description by TaskTable.description
     var deadline by TaskTable.deadline
+    var isCompleted by TaskTable.isCompleted
+    var completedAt by TaskTable.completedAt
+    var createdAt by TaskTable.createdAt
 }

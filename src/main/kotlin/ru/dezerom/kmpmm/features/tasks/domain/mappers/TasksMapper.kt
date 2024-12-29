@@ -13,7 +13,10 @@ fun TaskModel.toDto() = GetTaskDto(
     id = id.toString(),
     name = name,
     description = description,
-    deadline = deadline
+    deadline = deadline,
+    createdAt = createdAt,
+    isCompleted = isCompleted,
+    completedAt = completedAt
 )
 
 fun TaskDao.toDomain() = TaskModel(
@@ -21,5 +24,8 @@ fun TaskDao.toDomain() = TaskModel(
     name = title,
     description = description,
     deadline = deadline,
-    creatorId = userId.value
+    creatorId = userId.value,
+    createdAt = createdAt,
+    isCompleted = isCompleted,
+    completedAt = completedAt
 )

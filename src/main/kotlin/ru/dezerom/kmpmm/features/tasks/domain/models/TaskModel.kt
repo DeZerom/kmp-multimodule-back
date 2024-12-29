@@ -8,4 +8,7 @@ data class TaskModel(
     val description: String?,
     val deadline: Long?,
     val creatorId: UUID,
+    val createdAt: Long,
+    val isCompleted: Boolean,
+    val completedAt: Long?
 )

@@ -15,6 +15,7 @@ import ru.dezerom.kmpmm.common.responds.Response
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.UserDto
+import ru.dezerom.kmpmm.tools.TEST_ACCESS_TOKEN_TIMEOUT
 import ru.dezerom.kmpmm.tools.createApp
 import ru.dezerom.kmpmm.tools.createCustomClient
 import kotlin.test.BeforeTest
@@ -61,7 +62,7 @@ class RefreshTokenTest {
             tokens6 = makePost(Urls.Auth.AUTHORIZE, creds6).body<Response<TokensDto>>().body
             tokens7 = makePost(Urls.Auth.AUTHORIZE, creds7).body<Response<TokensDto>>().body
 
-            delay(1500)
+            delay(TEST_ACCESS_TOKEN_TIMEOUT + 500)
             assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens1.accessToken))
             assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens2.accessToken))
             assertWrongAuth(makeGet(Urls.Auth.ME, authHeader = tokens3.accessToken))
