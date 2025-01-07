@@ -77,4 +77,20 @@ class TasksService(
 
         return repository.getTasks(principle.id).map { it.toDto() }
     }
+
+    suspend fun deleteTask(principle: UserIdPrinciple?, taskId: String?): Result<BoolResponse> {
+        if (principle == null) return defaultAuthError()
+        if (taskId.isNullOrBlank()) return defaultNoDataError()
+
+        val taskUUID = taskId.toUUID()?: return wrongDataFormatError()
+
+        val foundTask = repository.getTask(taskUUID).fold(
+            onSuccess = { it },
+            onFailure = { return notFoundError() }
+        )
+
+        if (foundTask.creatorId!= principle.id) return authError()
+
+        return repository.deleteTask(taskUUID)
+    }
 }

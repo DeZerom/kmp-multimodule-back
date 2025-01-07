@@ -31,6 +31,10 @@ fun Application.configureTasksRouting() {
                 }
             }
 
+            delete("${Urls.Tasks.DELETE}/{$TASK_ID_PARAM}") {
+                call.makeResponse { tasksService.deleteTask(call.principal(), call.parameters[TASK_ID_PARAM]) }
+            }
+
             get(Urls.Tasks.GET_ALL) {
                 call.makeResponse { tasksService.getTasks(call.principal()) }
             }

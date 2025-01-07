@@ -2,6 +2,8 @@ package ru.dezerom.kmpmm.features.tasks.data.sources
 
 import io.ktor.http.*
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
 import ru.dezerom.kmpmm.common.constants.StringConst
 import ru.dezerom.kmpmm.common.db.safeSuspendTransaction
@@ -73,5 +75,12 @@ class TaskSource {
         errorMessage = StringConst.Errors.INTERNAL_ERROR
     ) {
         TaskDao[taskId]
+    }
+
+    suspend fun deleteTask(taskId: UUID): Result<Boolean> = safeSuspendTransaction(
+        errorCode = HttpStatusCode.InternalServerError,
+        errorMessage = StringConst.Errors.INTERNAL_ERROR
+    ) {
+        TaskTable.deleteWhere { id eq taskId } > 0
     }
 }

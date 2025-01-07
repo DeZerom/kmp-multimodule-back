@@ -42,4 +42,8 @@ class TaskRepository(
     suspend fun getTask(taskId: UUID): Result<TaskModel> {
         return source.getTask(taskId).map { it.toDomain() }
     }
+
+    suspend fun deleteTask(taskId: UUID): Result<BoolResponse> {
+        return source.deleteTask(taskId).map { BoolResponse(it) }
+    }
 }
