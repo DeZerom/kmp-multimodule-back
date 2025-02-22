@@ -120,7 +120,8 @@ private suspend fun JWTChallengeContext.defaultChallenge() {
         status = HttpStatusCode.Unauthorized,
         message = Response(
             success = false,
-            body = StringConst.Errors.AUTH_ERROR
+            body = null,
+            error = StringConst.Errors.AUTH_ERROR
         )
     )
 }

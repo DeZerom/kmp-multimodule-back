@@ -25,9 +25,9 @@ suspend fun assertAccessDenied(response: HttpResponse) =
 suspend fun assertError(response: HttpResponse, status: HttpStatusCode, message: String) {
     assertEquals(status, response.status)
 
-    val body = response.body<Response<String>>()
+    val body = response.body<Response<String?>>()
     assertFalse(body.success)
-    assertEquals(message, body.body)
+    assertEquals(message, body.error)
 }
 
 suspend fun assertOkBoolResponse(response: HttpResponse) {

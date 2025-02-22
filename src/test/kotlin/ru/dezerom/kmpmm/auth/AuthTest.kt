@@ -86,16 +86,16 @@ class AuthTest {
     private suspend fun HttpResponse.assertNoCredentials() {
         assertEquals(HttpStatusCode.BadRequest, status)
 
-        val body = body<Response<String>>()
+        val body = body<Response<String?>>()
         assertEquals(false, body.success)
-        assertEquals(StringConst.Errors.NO_CREDENTIALS, body.body)
+        assertEquals(StringConst.Errors.NO_CREDENTIALS, body.error)
     }
 
     private suspend fun HttpResponse.assertWrongCredentials() {
         assertEquals(HttpStatusCode.Unauthorized, status)
 
-        val body = body<Response<String>>()
+        val body = body<Response<String?>>()
         assertEquals(false, body.success)
-        assertEquals(StringConst.Errors.WRONG_CREDENTIALS, body.body)
+        assertEquals(StringConst.Errors.WRONG_CREDENTIALS, body.error)
     }
 }

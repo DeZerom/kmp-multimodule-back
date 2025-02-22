@@ -142,10 +142,10 @@ class RefreshTokenTest {
     }
 
     private suspend fun assertWrongAuth(response: HttpResponse) {
-        val err = response.body<Response<String>>()
+        val err = response.body<Response<String?>>()
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(StringConst.Errors.AUTH_ERROR, err.body)
+        assertEquals(StringConst.Errors.AUTH_ERROR, err.error)
         assertFalse(err.success)
     }
 }

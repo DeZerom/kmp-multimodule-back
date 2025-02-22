@@ -58,9 +58,9 @@ class AddTaskTest {
             val resp = makePost(Urls.Tasks.CREATE, authHeader = tokens.accessToken)
             assertEquals(HttpStatusCode.BadRequest, resp.status)
 
-            val body = resp.body<Response<String>>()
+            val body = resp.body<Response<String?>>()
             assertFalse(body.success)
-            assertEquals(StringConst.Errors.NO_DATA, body.body)
+            assertEquals(StringConst.Errors.NO_DATA, body.error)
         }
     }
 
@@ -71,9 +71,9 @@ class AddTaskTest {
             val resp = makePost(Urls.Tasks.CREATE, authHeader = tokens.accessToken, body = CreateTaskDto())
             assertEquals(HttpStatusCode.BadRequest, resp.status)
 
-            val body = resp.body<Response<String>>()
+            val body = resp.body<Response<String?>>()
             assertFalse(body.success)
-            assertEquals(StringConst.Errors.NO_DATA, body.body)
+            assertEquals(StringConst.Errors.NO_DATA, body.error)
         }
     }
 

@@ -61,16 +61,16 @@ class RegistrationTest {
     private suspend fun assertWrongCredentials(resp: HttpResponse) {
         assertEquals(HttpStatusCode.BadRequest, resp.status)
 
-        val respBody = resp.body<Response<String>>()
+        val respBody = resp.body<Response<String?>>()
         assertEquals(false, respBody.success)
-        assertEquals(StringConst.Errors.NO_CREDENTIALS, respBody.body)
+        assertEquals(StringConst.Errors.NO_CREDENTIALS, respBody.error)
     }
 
     private suspend fun assertAlreadyExists(resp: HttpResponse) {
         assertEquals(HttpStatusCode.BadRequest, resp.status)
 
-        val respBody = resp.body<Response<String>>()
+        val respBody = resp.body<Response<String?>>()
         assertEquals(false, respBody.success)
-        assertEquals(StringConst.Errors.USER_ALREADY_EXISTS, respBody.body)
+        assertEquals(StringConst.Errors.USER_ALREADY_EXISTS, respBody.error)
     }
 }

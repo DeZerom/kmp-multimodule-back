@@ -15,7 +15,7 @@ suspend inline fun <reified R : Any> ApplicationCall.makeResponse(block: () -> R
 
             respond(
                 status = err?.code ?: HttpStatusCode.InternalServerError,
-                message = err?.toResponse() ?: Response(false, "Что-то пошло не так")
+                message = err?.toResponse() ?: Response(false, null, "Что-то пошло не так")
             )
         }
     )
