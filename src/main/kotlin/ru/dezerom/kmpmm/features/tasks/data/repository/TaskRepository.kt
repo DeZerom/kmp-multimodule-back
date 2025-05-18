@@ -14,8 +14,8 @@ class TaskRepository(
         name: String,
         description: String?,
         deadline: Long?
-    ): Result<BoolResponse> {
-        return source.createTask(userId, name, description, deadline).map { BoolResponse(true) }
+    ): Result<TaskModel> {
+        return source.createTask(userId, name, description, deadline).map { it.toDomain() }
     }
 
     suspend fun editTask(

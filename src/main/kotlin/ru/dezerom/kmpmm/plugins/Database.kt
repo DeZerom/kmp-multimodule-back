@@ -17,7 +17,7 @@ fun Application.configureDB(test: Boolean = false) {
     }
 
     transaction {
-        SchemaUtils.create(
+        SchemaUtils.createMissingTablesAndColumns(
             UserTable,
             TokenTable,
             TaskTable
