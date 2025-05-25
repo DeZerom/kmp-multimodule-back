@@ -5,6 +5,7 @@ import ru.dezerom.kmpmm.common.utils.security.*
 import ru.dezerom.kmpmm.common.utils.toUUID
 import ru.dezerom.kmpmm.features.tasks.data.repository.TaskRepository
 import ru.dezerom.kmpmm.features.tasks.domain.mappers.toDto
+import ru.dezerom.kmpmm.features.tasks.routing.dto.changeComplete.ChangeCompleteDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.create.CreateTaskDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.edit.EditTaskDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.get.GetTaskDto
@@ -52,7 +53,7 @@ class TasksService(
         )
     }
 
-    suspend fun changeCompleteStatus(principle: UserIdPrinciple?, taskId: String?): Result<BoolResponse> {
+    suspend fun changeCompleteStatus(principle: UserIdPrinciple?, taskId: String?): Result<ChangeCompleteDto> {
         if (principle == null) return defaultAuthError()
         if (taskId.isNullOrBlank()) return defaultNoDataError()
 
@@ -66,10 +67,23 @@ class TasksService(
         if (foundTask.creatorId != principle.id) return authError()
         val isCompleted = foundTask.isCompleted
 
+        val time = if (isCompleted) null else System.currentTimeMillis()
         return repository.changeCompletedStatus(
             taskId = taskUUID,
             newStatus = !foundTask.isCompleted,
-            time = if (isCompleted) null else System.currentTimeMillis()
+            time = time
+        ).fold(
+            onSuccess = {
+                if (it) Result.success(
+                    ChangeCompleteDto(
+                        success = true,
+                        completedAt = time
+                    )
+                ) else {
+                    unknownError()
+                }
+            },
+            onFailure = { Result.failure(it) }
         )
     }
 

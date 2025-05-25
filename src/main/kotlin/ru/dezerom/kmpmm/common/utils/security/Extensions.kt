@@ -29,6 +29,11 @@ fun <T> authError() = Result.failure<T>(ResponseError(
     code = HttpStatusCode.Forbidden
 ))
 
+fun <T> unknownError() = Result.failure<T>(ResponseError(
+    message = StringConst.Errors.INTERNAL_ERROR,
+    code = HttpStatusCode.InternalServerError
+))
+
 inline fun UserIdPrinciple?.ifNull(block: () -> Unit) {
     if (this == null) block()
 }

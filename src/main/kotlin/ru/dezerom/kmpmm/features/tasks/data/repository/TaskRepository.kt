@@ -31,8 +31,8 @@ class TaskRepository(
         taskId: UUID,
         newStatus: Boolean,
         time: Long?
-    ): Result<BoolResponse> {
-        return source.changeCompletedStatus(taskId, newStatus, time).map { BoolResponse(it) }
+    ): Result<Boolean> {
+        return source.changeCompletedStatus(taskId, newStatus, time)
     }
 
     suspend fun getTasks(userId: UUID): Result<List<TaskModel>> {

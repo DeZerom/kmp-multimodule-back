@@ -1,21 +1,22 @@
 package ru.dezerom.kmpmm.tasks
 
 import io.ktor.client.call.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.server.testing.*
 import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNull
 import ru.dezerom.kmpmm.Urls
 import ru.dezerom.kmpmm.common.requests.makePatch
 import ru.dezerom.kmpmm.common.requests.makePost
 import ru.dezerom.kmpmm.common.responds.Response
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
+import ru.dezerom.kmpmm.features.tasks.routing.dto.changeComplete.ChangeCompleteDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.create.CreateTaskDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.get.GetTaskDto
 import ru.dezerom.kmpmm.tools.*
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class ChangeCompletedStatusTest {
     private val creds1 = CredentialsDto("change_completed_status_test_1", "bfakjsnd1")
@@ -85,11 +86,12 @@ class ChangeCompletedStatusTest {
     fun success() = testApplication {
         createApp()
         createCustomClient().apply {
-            assertOkBoolResponse(
+            assertOk(
                 makePatch(
                     "${Urls.Tasks.CHANGE_COMPLETE_STATUS}/${task1.id}",
                     authHeader = tokens1.accessToken
-                )
+                ),
+                expTime = System.currentTimeMillis()
             )
 
             val completedTask = getTask(tokens1.accessToken)
@@ -97,11 +99,12 @@ class ChangeCompletedStatusTest {
             assertTrue(completedTask.isCompleted)
             assertTrue(completedTask.completedAt in (now - 1000)..(now + 1000))
 
-            assertOkBoolResponse(
+            assertOk(
                 makePatch(
                     "${Urls.Tasks.CHANGE_COMPLETE_STATUS}/${task1.id}",
                     authHeader = tokens1.accessToken
-                )
+                ),
+                expTime = null
             )
 
             val notCompletedTask = getTask(tokens1.accessToken)
@@ -110,4 +113,22 @@ class ChangeCompletedStatusTest {
         }
     }
 
+    private suspend fun assertOk(response: HttpResponse, expTime: Long?) {
+        assertEquals(HttpStatusCode.OK, response.status)
+
+        val body = response.body<Response<ChangeCompleteDto>>()
+        assertTrue(body.success)
+        assertNull(body.error)
+        assertTrue(body.body.success)
+
+        val time = body.body.completedAt
+        if (expTime == null) {
+            assertEquals(null, time)
+            return
+        } else {
+            assertNotNull(time)
+
+            assertTrue(expTime in (time - 1000L)..(time + 1000L))
+        }
+    }
 }
