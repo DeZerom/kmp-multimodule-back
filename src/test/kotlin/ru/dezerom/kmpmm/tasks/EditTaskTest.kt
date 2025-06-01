@@ -6,7 +6,6 @@ import io.ktor.server.testing.*
 import ru.dezerom.kmpmm.Urls
 import ru.dezerom.kmpmm.common.requests.makePost
 import ru.dezerom.kmpmm.common.responds.Response
-import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import ru.dezerom.kmpmm.features.tasks.routing.dto.create.CreateTaskDto
@@ -150,9 +149,8 @@ class EditTaskTest {
 
             assertEquals(HttpStatusCode.OK, resp.status)
 
-            val body = resp.body<Response<BoolResponse>>()
+            val body = resp.body<Response<GetTaskDto>>()
             assertTrue(body.success)
-            assertTrue(body.body.response)
 
             val editedTask = getTask(tokens2.accessToken)
             assertEquals(editTask.id, editedTask.id)

@@ -29,7 +29,7 @@ class TasksService(
         ).map { it.toDto() }
     }
 
-    suspend fun editTask(principle: UserIdPrinciple?, task: EditTaskDto?): Result<BoolResponse> {
+    suspend fun editTask(principle: UserIdPrinciple?, task: EditTaskDto?): Result<GetTaskDto> {
         if (principle == null) return defaultAuthError()
 
         if (task == null || task.id.isNullOrBlank() || task.name.isNullOrBlank()) {
@@ -50,6 +50,20 @@ class TasksService(
             newName = task.name,
             newDescription = task.description,
             newDeadline = task.deadline
+        ).fold(
+            onSuccess = {
+                if (it)
+                    Result.success(
+                        foundTask.copy(
+                            name = task.name,
+                            description = task.description,
+                            deadline = task.deadline
+                        ).toDto()
+                    )
+                else
+                    unknownError()
+            },
+            onFailure = { Result.failure(it) }
         )
     }
 

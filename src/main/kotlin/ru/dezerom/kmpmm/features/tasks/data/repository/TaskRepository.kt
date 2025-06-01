@@ -23,8 +23,8 @@ class TaskRepository(
         newName: String,
         newDescription: String?,
         newDeadline: Long?,
-    ): Result<BoolResponse> {
-        return source.editTask(taskId, newName, newDescription, newDeadline).map { BoolResponse(it) }
+    ): Result<Boolean> {
+        return source.editTask(taskId, newName, newDescription, newDeadline).map { it }
     }
 
     suspend fun changeCompletedStatus(
