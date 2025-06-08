@@ -35,7 +35,7 @@ private val authModule = module {
     single { UserSource() }
     single { TokenSource() }
     single { AuthRepository(userSource = get(), tokenSource = get()) }
-    single { AuthService(authRepository = get(), config = get()) }
+    single { AuthService(authRepository = get(), taskRepository = get(), config = get()) }
 }
 
 private val tasksModule = module {

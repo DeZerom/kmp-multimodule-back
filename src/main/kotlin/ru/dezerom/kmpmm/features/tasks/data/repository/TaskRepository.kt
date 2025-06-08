@@ -4,6 +4,7 @@ import ru.dezerom.kmpmm.common.responds.common.BoolResponse
 import ru.dezerom.kmpmm.features.tasks.data.sources.TaskSource
 import ru.dezerom.kmpmm.features.tasks.domain.mappers.toDomain
 import ru.dezerom.kmpmm.features.tasks.domain.models.TaskModel
+import ru.dezerom.kmpmm.features.tasks.domain.models.UserStats
 import java.util.*
 
 class TaskRepository(
@@ -45,5 +46,17 @@ class TaskRepository(
 
     suspend fun deleteTask(taskId: UUID): Result<BoolResponse> {
         return source.deleteTask(taskId).map { BoolResponse(it) }
+    }
+
+    suspend fun getStats(userId: UUID): Result<UserStats> {
+        return source.getTasks(userId).map {
+            val completedTasks = it.filter { task -> task.isCompleted }.size
+            UserStats(
+                userId = userId,
+                tasks = it.size,
+                completedTasks = completedTasks,
+                uncompletedTasks = it.size - completedTasks
+            )
+        }
     }
 }

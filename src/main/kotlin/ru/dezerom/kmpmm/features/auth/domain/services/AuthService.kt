@@ -16,12 +16,14 @@ import ru.dezerom.kmpmm.features.auth.domain.mapper.toDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.CredentialsDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.TokensDto
 import ru.dezerom.kmpmm.features.auth.routing.dto.UserDto
+import ru.dezerom.kmpmm.features.tasks.data.repository.TaskRepository
 import ru.dezerom.kmpmm.plugins.JWT_ID_CLAIM
 import ru.dezerom.kmpmm.plugins.JWT_IS_REFRESH
 import java.util.*
 
 class AuthService(
     private val authRepository: AuthRepository,
+    private val taskRepository: TaskRepository,
     private val config: Config
 ) {
     suspend fun refreshTokens(principle: UserIdAndTokenIdPrinciple?): Result<TokensDto> {
@@ -42,10 +44,17 @@ class AuthService(
             ResponseError(StringConst.Errors.AUTH_ERROR, HttpStatusCode.Unauthorized)
         )
 
-        return authRepository.getUserById(token.id).fold(
-            onSuccess = { Result.success(it.toDto()) },
+        val user = authRepository.getUserById(token.id).fold(
+            onSuccess = { it },
             onFailure = { return Result.failure(it) }
         )
+
+        val stats = taskRepository.getStats(user.id).fold(
+            onSuccess = { it },
+            onFailure = { return Result.failure(it) }
+        )
+
+        return Result.success(user.toDto(stats))
     }
 
     suspend fun authorizeUser(credentials: CredentialsDto?): Result<TokensDto> {
